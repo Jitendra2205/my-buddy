@@ -98,9 +98,13 @@ The key lives only in `.env` (git-ignored) or in the host's secret settings, is 
 
 ## Hosting
 
+`GET /healthz` is the one route outside the password gate — platform health checks arrive without credentials, and a 401 there reads as a failed deploy. It reports liveness only: no settings, no counts, nothing about the key.
+
 My Buddy is a plain Node HTTP server, so it runs anywhere Node runs. It is **not** deployable to front-end-only platforms (Vercel static, Netlify, Lovable) — those don't run a long-lived Node process.
 
-**Render** — a `render.yaml` blueprint is included. Push the repo, create a Blueprint service from it, then set `GEMINI_API_KEY` and `ACCESS_PASSWORD` in the dashboard. The blueprint mounts a 1 GB disk at `data/`; without a persistent disk every deploy wipes your chats and indexed documents.
+**Render** — a `render.yaml` blueprint is included, set up for the free plan. Push the repo, then in Render pick **New → Blueprint** and select it; set `GEMINI_API_KEY` and `ACCESS_PASSWORD` in the dashboard when prompted.
+
+Two things to expect on the free plan. There is no persistent disk, so `data/` is ephemeral — chats, indexed documents and artifacts are wiped on every redeploy and on every wake from idle sleep. The app re-seeds its four built-in agents on boot, so it always comes back usable, just empty. And free services sleep after about 15 minutes idle, taking roughly a minute to answer the next request. To keep data, switch `plan` to `starter` and uncomment the `disk` block in `render.yaml`; no code changes are needed.
 
 **Railway / Fly.io / Cloud Run** — a `Dockerfile` is included. Set the same env vars as secrets and mount a volume at `/app/data`.
 

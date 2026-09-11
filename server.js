@@ -236,6 +236,13 @@ const server = http.createServer(async (req, res) => {
   const method = req.method;
   let m;
 
+  // Health checks run before the gate — a platform probe has no credentials,
+  // and a 401 here would read as "unhealthy" and fail the deploy. It reports
+  // liveness only: no settings, no counts, nothing about the key.
+  if (p === "/healthz") {
+    return sendJson(res, 200, { status: "ok", uptime: Math.round(process.uptime()) });
+  }
+
   if (!authorized(req)) {
     res.writeHead(401, {
       "WWW-Authenticate": 'Basic realm="My Buddy", charset="UTF-8"',

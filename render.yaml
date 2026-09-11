@@ -22,7 +22,7 @@ services:
     plan: free
     buildCommand: npm install --omit=dev
     startCommand: node server.js
-    healthCheckPath: /
+    healthCheckPath: /healthz
     envVars:
       - key: NODE_VERSION
         value: "22"
