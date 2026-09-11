@@ -1010,7 +1010,11 @@ themeBtn.onclick = () => applyTheme(document.documentElement.getAttribute("data-
   ]);
   Object.assign(S, { config, agents, docSets, documents, actions });
   if (!agents.some((a) => a.id === S.agentId)) S.agentId = agents[0].id;
-  if (!config.hasKey) $("#key-banner").classList.remove("hidden");
+  if (!config.hasKey) {
+    const banner = $("#key-banner");
+    banner.textContent = "⚠️ " + (config.noKeyMessage || "No API key configured.");
+    banner.classList.remove("hidden");
+  }
   renderProviderBadge();
   renderAgentChip(); renderAgentTools(); renderAgentList(); renderProjects();
   await loadSessions();

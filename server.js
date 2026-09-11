@@ -39,6 +39,14 @@ state.settings.model = providers.modelFor(providers.get(state.settings.provider)
 
 const hasKey = () => providers.anyKey();
 
+// Bound to a public interface means a hosted instance, where there is no .env
+// to edit — telling someone to edit one sends them looking for a file that
+// isn't there.
+const IS_HOSTED = HOST !== "127.0.0.1" && HOST !== "localhost";
+const NO_KEY_MESSAGE = IS_HOSTED
+  ? "No API key configured. Set GEMINI_API_KEY in this service's environment settings — the service restarts automatically."
+  : "No API key configured. Add GEMINI_API_KEY to .env and restart the server.";
+
 // The provider actually driving a turn, plus the model it should use.
 function activeProvider() {
   const provider = providers.resolve(state.settings);
@@ -136,9 +144,7 @@ async function handleChat(req, res, sessionId) {
   if (!session) return sendJson(res, 404, { error: "Session not found" });
   if (!hasKey()) {
     dropIfEmpty(session);
-    return sendJson(res, 400, {
-      error: "No API key configured. Add GEMINI_API_KEY to .env and restart the server.",
-    });
+    return sendJson(res, 400, { error: NO_KEY_MESSAGE });
   }
 
   let body;
@@ -257,6 +263,7 @@ const server = http.createServer(async (req, res) => {
       const { provider, model } = activeProvider();
       return sendJson(res, 200, {
         hasKey: hasKey(),
+        noKeyMessage: NO_KEY_MESSAGE,
         settings: state.settings,
         providers: providers.summary(),
         active: { provider: provider.id, label: provider.label, model, ready: provider.hasKey() },
