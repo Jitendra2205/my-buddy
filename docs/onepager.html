@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>My Buddy — Overview</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #14181d;
+    --body: #363c43;
+    --soft: #6b7480;
+    --line: #dfe3e8;
+    --wash: #f4f7f9;
+    --accent: #1f4b5f;
+  }
+
+  html, body { width: 210mm; height: 297mm; }
+  body {
+    font-family: "Segoe UI", -apple-system, Helvetica, Arial, sans-serif;
+    color: var(--body);
+    font-size: 8.7pt;
+    line-height: 1.42;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    position: relative;
+  }
+
+  /* ---------- header ---------- */
+  header { background: var(--ink); color: #fff; padding: 10mm 15mm 9mm; }
+  .eyebrow {
+    font-size: 6.8pt; letter-spacing: .2em; text-transform: uppercase;
+    color: #94a1ae; margin-bottom: 3mm;
+  }
+  header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 21pt; line-height: 1.1; font-weight: normal;
+    letter-spacing: -.01em; margin-bottom: 2.6mm;
+  }
+  header p { font-size: 9.4pt; color: #c6d0d9; max-width: 150mm; line-height: 1.45; }
+
+  main { padding: 6mm 15mm 0; }
+
+  h2 {
+    font-size: 7pt; letter-spacing: .17em; text-transform: uppercase;
+    color: var(--accent); font-weight: 700;
+    padding-bottom: 1.4mm; border-bottom: 1px solid var(--line); margin-bottom: 2.8mm;
+  }
+  section { margin-bottom: 3.7mm; }
+
+  /* ---------- problem ---------- */
+  .problem { display: flex; gap: 5.5mm; }
+  .problem div { flex: 1; }
+  .problem strong { display: block; color: var(--ink); font-size: 8.9pt; margin-bottom: .8mm; }
+  .problem p { font-size: 8.3pt; line-height: 1.38; }
+
+  /* ---------- answer ---------- */
+  .answer {
+    background: var(--wash); border-left: 2.5pt solid var(--accent);
+    padding: 3.6mm 4.5mm; font-size: 9pt; line-height: 1.48;
+  }
+  .answer b { color: var(--ink); }
+
+  /* ---------- features ---------- */
+  .features { display: grid; grid-template-columns: 1fr 1fr; gap: 2.6mm 7mm; }
+  .feat { display: flex; gap: 2.6mm; }
+  .feat .n {
+    font-family: Georgia, serif; font-size: 8.2pt; color: var(--accent);
+    min-width: 4.5mm; padding-top: .2mm;
+  }
+  .feat b { color: var(--ink); font-size: 8.7pt; display: block; }
+  .feat span { font-size: 8.1pt; line-height: 1.35; display: block; }
+
+  /* ---------- use cases ---------- */
+  .uses { display: flex; gap: 3.4mm; }
+  .use { flex: 1; border: 1px solid var(--line); border-radius: 1.6mm; padding: 2.8mm 3.2mm; }
+  .use b { display: block; color: var(--ink); font-size: 8.4pt; margin-bottom: .7mm; }
+  .use span { font-size: 7.9pt; line-height: 1.32; color: var(--soft); }
+
+  /* ---------- data note ---------- */
+  .note {
+    display: flex; gap: 5mm; border: 1px solid var(--line);
+    border-radius: 1.6mm; padding: 3.4mm 4mm;
+  }
+  .note .half { flex: 1; }
+  .note b { color: var(--ink); display: block; margin-bottom: .8mm; font-size: 8.4pt; }
+  .note p { font-size: 8.1pt; line-height: 1.38; }
+
+  /* ---------- footer ---------- */
+  footer {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 3.6mm 15mm 5mm; border-top: 1px solid var(--line);
+    display: flex; align-items: flex-end; gap: 8mm;
+    font-size: 7.9pt; color: var(--soft);
+  }
+  footer .cost { flex: 1; }
+  footer .cost b { color: var(--ink); display: block; margin-bottom: .6mm; font-size: 8.3pt; }
+  footer .mark {
+    text-align: right; font-family: Georgia, serif; font-size: 8.2pt;
+    color: var(--ink); white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Internal Overview</div>
+  <h1>My Buddy</h1>
+  <p>A private AI assistant that runs on a computer you control, so your team can ask questions about
+     your own documents without handing them to a public chatbot.</p>
+</header>
+
+<main>
+
+  <section>
+    <h2>The problem it solves</h2>
+    <div class="problem">
+      <div>
+        <strong>Data walks out the door</strong>
+        <p>People paste candidate details, salary bands and draft policies into free public chatbots
+           because it is quicker than looking things up. Once that text leaves, you cannot recall it
+           or show where it went.</p>
+      </div>
+      <div>
+        <strong>The answers are hard to find</strong>
+        <p>Handbooks, policy PDFs and onboarding notes sit across drives and inboxes. So staff ask a
+           colleague instead, and the same questions land on the same desks every week.</p>
+      </div>
+      <div>
+        <strong>Per-seat AI tools add up</strong>
+        <p>Rolling out a commercial assistant means a licence for every employee, another vendor to
+           review, and company material copied into someone else's platform.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What it is</h2>
+    <div class="answer">
+      One application, running on a single computer or an internal server. You point it at your own
+      material — handbook, leave policy, expense rules, onboarding pack — and people ask questions in
+      plain English. <b>Every answer cites the document it came from</b>, so it can be checked rather than
+      taken on trust. Documents and chat history stay in a folder on that machine, not in a vendor's database.
+    </div>
+  </section>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="features">
+      <div class="feat"><span class="n">01</span><div><b>Answers from your documents</b>
+        <span>Upload policies and handbooks, then get answers with a citation to the exact source.</span></div></div>
+      <div class="feat"><span class="n">02</span><div><b>Purpose-built assistants</b>
+        <span>Separate assistants for separate jobs, each with its own instructions and documents.</span></div></div>
+      <div class="feat"><span class="n">03</span><div><b>Deep research</b>
+        <span>For bigger questions it plans the work, investigates each part and writes a sourced summary.</span></div></div>
+      <div class="feat"><span class="n">04</span><div><b>Live web search</b>
+        <span>Current information with links, when the answer depends on something recent.</span></div></div>
+      <div class="feat"><span class="n">05</span><div><b>Projects</b>
+        <span>Group documents by team or topic and restrict an assistant to only that material.</span></div></div>
+      <div class="feat"><span class="n">06</span><div><b>Voice</b>
+        <span>Dictate a question instead of typing, and have the answer read back aloud.</span></div></div>
+      <div class="feat"><span class="n">07</span><div><b>Usage dashboard</b>
+        <span>See what has been used and what it cost, with no per-seat licences to track.</span></div></div>
+      <div class="feat"><span class="n">08</span><div><b>Document search</b>
+        <span>Search everything indexed directly, to confirm what the assistant is drawing on.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Where it helps an HR team</h2>
+    <div class="uses">
+      <div class="use"><b>Policy questions</b><span>Staff self-serve on leave, expenses and benefits instead of emailing HR.</span></div>
+      <div class="use"><b>Onboarding</b><span>New joiners ask the handbook directly in their first weeks.</span></div>
+      <div class="use"><b>Drafting</b><span>First drafts of job descriptions, interview questions and internal notes.</span></div>
+      <div class="use"><b>Summarising</b><span>Long provider documents cut down to the changes that matter.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Worth knowing before you circulate it</h2>
+    <div class="note">
+      <div class="half">
+        <b>Where the data sits</b>
+        <p>Uploaded documents and chat history are stored only on the machine running the app. To write an
+           answer, the question and the relevant excerpts are sent to Anthropic's Claude service, which
+           supplies the language model; the material is not used to train it.</p>
+      </div>
+      <div class="half">
+        <b>What it is not</b>
+        <p>It is built for one machine, so there are no company logins, user permissions or audit trail.
+           Treat it as a personal or small-team tool. Anything needing per-employee access control or a
+           formal record of who asked what would need a different setup.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="cost">
+    <b>What it takes to run</b>
+    A computer or internal server, an Anthropic account for the model, and about ten minutes to set up.
+    Cost follows usage rather than headcount, so a small pilot stays inexpensive.
+  </div>
+  <div class="mark">My&nbsp;Buddy</div>
+</footer>
+
+</body>
+</html>

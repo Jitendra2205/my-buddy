@@ -1,0 +1,50 @@
+# Render blueprint. Push this repo to GitHub, then in Render:
+#   New > Blueprint > pick the repo. It reads this file.
+#
+# Free plan, matching the rest of this account — no card on file, no billing.
+#
+# Two trade-offs come with the free plan, both expected:
+#   1. No persistent disk (that needs a paid instance), so data/ lives on the
+#      container's ephemeral filesystem. Chats, indexed documents and artifacts
+#      are wiped on every redeploy and on every wake from idle sleep. The app
+#      re-seeds its four built-in agents on boot, so it always comes back
+#      usable — just empty.
+#   2. Free services sleep after ~15 minutes idle and take roughly a minute to
+#      wake on the next request.
+#
+# To make data durable, switch `plan` to starter and uncomment the disk block
+# at the bottom. No code changes are needed either way.
+
+services:
+  - type: web
+    name: my-buddy
+    runtime: node
+    plan: free
+    buildCommand: npm install --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+
+      # Render routes to the container's external interface, so the server's
+      # loopback-only default has to be widened here. That is exactly why
+      # ACCESS_PASSWORD below is not optional.
+      - key: HOST
+        value: 0.0.0.0
+
+      # Set both of these in the Render dashboard. Never commit them.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ACCESS_PASSWORD
+        sync: false
+
+      - key: ACCESS_USER
+        value: buddy
+
+    # Paid plans only — uncomment together with `plan: starter` above to keep
+    # conversations and indexed documents across deploys.
+    # disk:
+    #   name: my-buddy-data
+    #   mountPath: /opt/render/project/src/data
+    #   sizeGB: 1

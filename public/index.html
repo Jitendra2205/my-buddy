@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0e1014" />
+  <title>My Buddy</title>
+
+  <!-- Apply the saved theme before first paint so there's no light flash. -->
+  <script>
+    try {
+      var t = localStorage.getItem("theme") || "dark";
+      document.documentElement.setAttribute("data-theme", t);
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", t === "dark" ? "#0e1014" : "#ffffff");
+    } catch (e) {}
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600;650&family=JetBrains+Mono:wght@400;500&display=swap"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤝</text></svg>" />
+</head>
+<body>
+  <button id="menu-btn" title="Menu">☰</button>
+  <div id="sidebar-scrim"></div>
+
+  <div id="app">
+    <!-- ============ sidebar: Onyx AppSidebar / AdminSidebar ============ -->
+    <aside id="sidebar">
+      <div class="brand">
+        <span class="logo">🤝</span>
+        <h1 id="brand-title">My Buddy</h1>
+        <span class="spacer"></span>
+        <button id="theme-toggle" class="icon-btn" title="Toggle theme">🌙</button>
+      </div>
+
+      <!-- app mode -->
+      <div id="sidebar-app">
+        <div class="side-actions">
+          <button class="side-action" id="new-chat-btn"><span class="ic">✎</span> New chat</button>
+          <button class="side-action" id="search-toggle"><span class="ic">🔍</span> Search chats</button>
+        </div>
+        <div id="side-search-wrap" class="hidden">
+          <input id="session-search" placeholder="Search chats…" />
+        </div>
+
+        <div class="side-scroll">
+          <div class="side-section">
+            <div class="side-head">Agents<span class="spacer"></span><button id="quick-new-agent" title="New agent">＋</button></div>
+            <div id="agent-list"></div>
+            <button class="side-more" data-goto="agents">Explore agents →</button>
+          </div>
+
+          <div class="side-section">
+            <div class="side-head">Projects<span class="spacer"></span><button id="quick-new-project" title="New project">＋</button></div>
+            <div id="project-list"></div>
+          </div>
+
+          <div class="side-section">
+            <div class="side-head">Recents</div>
+            <div id="session-list"></div>
+          </div>
+        </div>
+
+        <div class="side-foot">
+          <div id="key-banner" class="hidden">⚠️ No API key. Add <code>GEMINI_API_KEY</code> to <code>.env</code> and restart.</div>
+          <div id="provider-badge" class="provider-badge off">
+            <span class="dot"></span><span class="pname">—</span><span class="pmodel"></span>
+          </div>
+          <button class="side-action" id="open-admin"><span class="ic">⚙</span> Admin Panel</button>
+        </div>
+      </div>
+
+      <!-- admin mode -->
+      <div id="sidebar-admin" class="hidden">
+        <div class="side-actions">
+          <button class="side-action" id="close-admin"><span class="ic">←</span> Back to chat</button>
+        </div>
+        <div class="side-scroll">
+          <div class="admin-group-label">Configuration</div>
+          <button class="side-item nav-btn" data-view="settings"><span class="ic">⚙</span><span class="label">Model & Tools</span></button>
+          <button class="side-item nav-btn" data-view="usage"><span class="ic">📈</span><span class="label">Usage</span></button>
+
+          <div class="admin-group-label">Agents &amp; Actions</div>
+          <button class="side-item nav-btn" data-view="agents"><span class="ic">🤖</span><span class="label">Agents</span></button>
+          <button class="side-item nav-btn" data-view="actions"><span class="ic">⚡</span><span class="label">Actions</span></button>
+
+          <div class="admin-group-label">Documents &amp; Knowledge</div>
+          <button class="side-item nav-btn" data-view="connectors"><span class="ic">🔌</span><span class="label">Connectors</span></button>
+          <button class="side-item nav-btn" data-view="docsets"><span class="ic">📚</span><span class="label">Document Sets</span></button>
+          <button class="side-item nav-btn" data-view="explorer"><span class="ic">🔍</span><span class="label">Explorer</span></button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============ main ============ -->
+    <main id="main">
+      <section class="view" id="view-chat">
+        <header class="topbar">
+          <button class="agent-chip" id="agent-chip"></button>
+          <span class="spacer"></span>
+          <button id="sources-toggle" class="icon-btn" title="Sources & artifacts">📑</button>
+        </header>
+        <div id="agent-menu" class="agent-menu hidden"></div>
+
+        <div class="chat-body">
+          <div id="messages"></div>
+          <aside id="sources-panel">
+            <div class="panel-head"><strong>Sources & artifacts</strong><button id="sources-close" class="icon-btn">✕</button></div>
+            <div id="sources-body"><p class="muted small">Citations and generated files from this chat will appear here.</p></div>
+          </aside>
+        </div>
+
+        <div id="composer-wrap">
+          <div id="composer">
+            <textarea id="input" rows="1" placeholder="Ask anything…"></textarea>
+            <div class="composer-actions">
+              <button id="attach-btn" class="chip" title="Add a document to your knowledge base">📎</button>
+              <input type="file" id="file-input" class="hidden" accept=".txt,.md,.csv,.json,.js,.ts,.py,.html,.css,.log,.xml,.yaml,.yml,.tsv" />
+              <button class="chip" id="chip-research">🔬 Deep Research</button>
+              <button class="chip" id="chip-voice" title="Dictate">🎙️</button>
+              <button class="chip" id="chip-speak" title="Read replies aloud">🔊</button>
+              <span class="spacer"></span>
+              <span id="agent-tools" class="muted small"></span>
+              <button id="send-btn" title="Send">↑</button>
+            </div>
+          </div>
+          <div class="composer-hint">Enter to send · Shift+Enter for a new line</div>
+        </div>
+      </section>
+
+      <section class="view hidden" id="view-agents">
+        <header class="topbar"><h2>Agents</h2><span class="spacer"></span><button class="primary-btn" id="add-agent">＋ New agent</button></header>
+        <div class="page" id="agents-page"></div>
+      </section>
+
+      <section class="view hidden" id="view-actions">
+        <header class="topbar"><h2>Actions</h2><span class="spacer"></span><button class="primary-btn" id="add-action">＋ New action</button></header>
+        <div class="page" id="actions-page"></div>
+      </section>
+
+      <section class="view hidden" id="view-connectors">
+        <header class="topbar"><h2>Connectors</h2></header>
+        <div class="page" id="connectors-page"></div>
+      </section>
+
+      <section class="view hidden" id="view-docsets">
+        <header class="topbar"><h2>Document Sets</h2><span class="spacer"></span><button class="primary-btn" id="add-docset">＋ New set</button></header>
+        <div class="page" id="docsets-page"></div>
+      </section>
+
+      <section class="view hidden" id="view-explorer">
+        <header class="topbar"><h2>Document Explorer</h2></header>
+        <div class="page" id="explorer-page"></div>
+      </section>
+
+      <section class="view hidden" id="view-usage">
+        <header class="topbar"><h2>Usage</h2></header>
+        <div class="page" id="usage-page"></div>
+      </section>
+
+      <section class="view hidden" id="view-settings">
+        <header class="topbar"><h2>Model & Tools</h2></header>
+        <div class="page" id="settings-page"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="agent-dialog">
+    <form id="agent-form" method="dialog">
+      <h3 id="agent-form-title">New agent</h3>
+      <div class="row">
+        <label class="grow-0">Emoji<input name="emoji" maxlength="4" value="🧩" /></label>
+        <label class="grow">Name<input name="name" required placeholder="e.g. Contract Buddy" /></label>
+      </div>
+      <label>Description<input name="description" placeholder="What is this agent for?" /></label>
+      <label>Instructions<textarea name="system" rows="6" placeholder="You are a contract analyst…"></textarea></label>
+      <fieldset>
+        <legend>Tools</legend>
+        <label class="check"><input type="checkbox" name="knowledge" checked /> 📚 Knowledge (search indexed documents)</label>
+        <label class="check"><input type="checkbox" name="webSearch" /> 🌐 Web search</label>
+        <label class="check"><input type="checkbox" name="codeInterpreter" /> 🐍 Code interpreter</label>
+        <label class="check"><input type="checkbox" name="imageGen" /> 🖼️ Charts & images</label>
+      </fieldset>
+      <fieldset id="agent-docsets"><legend>Document sets</legend></fieldset>
+      <fieldset id="agent-actions"><legend>Actions</legend></fieldset>
+      <label>Starter prompts (one per line)<textarea name="starters" rows="3"></textarea></label>
+      <div class="dialog-actions">
+        <button value="cancel" class="ghost-btn">Cancel</button>
+        <button value="ok" class="primary-btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="action-dialog">
+    <form id="action-form" method="dialog">
+      <h3>New action</h3>
+      <p class="muted small" style="margin:0">Actions let an agent call an HTTP API — My Buddy's take on Onyx's OpenAPI/MCP actions.</p>
+      <label>Tool name (letters, numbers, underscores)<input name="name" required placeholder="get_ticket_status" /></label>
+      <label>Description (tells the model when to call it)<input name="description" placeholder="Look up a support ticket by id" /></label>
+      <div class="row">
+        <label class="grow-0">Method<select name="method"><option>GET</option><option>POST</option><option>PUT</option><option>DELETE</option></select></label>
+        <label class="grow">URL<input name="url" required placeholder="https://api.example.com/tickets" /></label>
+      </div>
+      <label>Headers (JSON)<textarea name="headers" rows="2" placeholder='{"Authorization": "Bearer …"}'></textarea></label>
+      <label>Input schema (JSON Schema)<textarea name="inputSchema" rows="5">{
+  "type": "object",
+  "properties": {
+    "id": { "type": "string", "description": "Ticket id" }
+  },
+  "required": ["id"]
+}</textarea></label>
+      <div class="dialog-actions">
+        <button value="cancel" class="ghost-btn">Cancel</button>
+        <button value="ok" class="primary-btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>

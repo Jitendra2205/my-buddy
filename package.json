@@ -1,0 +1,17 @@
+{
+  "name": "my-buddy",
+  "version": "1.0.0",
+  "description": "My Buddy — a lightweight personal AI assistant inspired by Onyx, running on Google Gemini with zero infrastructure",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test test/providers.test.js"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=20"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.115.0"
+  }
+}
